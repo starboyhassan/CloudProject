@@ -3,8 +3,10 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms import ValidationError
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
@@ -32,20 +34,22 @@ class UserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length=255, unique=True, null=False, blank=False)
     first_name = models.CharField(max_length=255)
     second_name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=11, unique=True)
+    phone_Number = PhoneNumberField(unique=True, null=False, blank=False)
+    email = models.EmailField(unique=True)
+
     city = models.ForeignKey(
         "City",
-        related_name="user_cities",
+        related_name="users",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    email = models.EmailField(unique=True)
 
-    USERNAME_FIELD = "email"
-    is_active = models.BooleanField(default=True)
+    USERNAME_FIELD = "username"
+
     is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
