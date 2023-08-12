@@ -1,4 +1,3 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -9,23 +8,22 @@ from .models import Directory, File
 
 
 @login_required
-def user_files(request):
-    user = request.user
-    files = File.objects.filter(user=user)
-    directories = Directory.objects.filter(user=user)
-    response_data = {
-        "files": [file.name for file in files],
-        "directories": [directory.name for directory in directories],
-    }
-    return JsonResponse(response_data)
+def file_api(request):
+    if request.user.is_superuser:
+        files = File.objects.all()
+        directories = Directory.objects.all()
+    else:
+        files = File.objects.filter(user=request.user)
+        directories = Directory.objects.filter(user=request.user)
 
+    file_data = [
+        {"id": file.id, "name": file.name, "user": file.user.username} for file in files
+    ]
+    directory_data = [
+        {"id": directory.id, "name": directory.name, "user": directory.user.username}
+        for directory in directories
+    ]
 
-@staff_member_required
-def admin_files(request):
-    files = File.objects.all()
-    directories = Directory.objects.all()
-    response_data = {
-        "files": [file.name for file in files],
-        "directories": [directory.name for directory in directories],
-    }
-    return JsonResponse(response_data)
+    data = {"files": file_data, "directories": directory_data}
+
+    return JsonResponse(data)

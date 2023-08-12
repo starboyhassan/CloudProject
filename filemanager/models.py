@@ -15,7 +15,7 @@ class Directory(models.Model):
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
     )
 
-    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -25,7 +25,7 @@ class File(models.Model):
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to="files/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE)
 
     def __str__(self):
