@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from .filters import DirectoryFilter, FileFilter
 from .models import Directory, File
 
 # Create your views here.
@@ -13,8 +14,8 @@ def file_api(request):
         files = File.objects.all()
         directories = Directory.objects.all()
     else:
-        files = File.objects.filter(user=request.user)
-        directories = Directory.objects.filter(user=request.user)
+        files = FileFilter(request.GET, queryset=File.objects.all())
+        directories = DirectoryFilter(request.GET, queryset=Directory.objects.all())
 
     file_data = [
         {"id": file.id, "name": file.name, "user": file.user.username} for file in files
