@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -17,14 +18,9 @@ def file_api(request):
         files = FileFilter(request.GET, queryset=File.objects.all())
         directories = DirectoryFilter(request.GET, queryset=Directory.objects.all())
 
-    file_data = [
-        {"id": file.id, "name": file.name, "user": file.user.username} for file in files
-    ]
-    directory_data = [
-        {"id": directory.id, "name": directory.name, "user": directory.user.username}
-        for directory in directories
-    ]
+    file_data = serializers.serialize("json", files)
+    directory_data = serializers.serialize("json", directories)
 
     data = {"files": file_data, "directories": directory_data}
 
-    return JsonResponse(data)
+    return JsonResponse(data, safe=False)
