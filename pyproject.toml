@@ -13,10 +13,10 @@ django-mptt = "^0.14.0"
 pre-commit = "^3.3.3"
 djangorestframework = "^3.14.0"
 markdown = "^3.4.4"
-django-filter = "^23.2"
 django-phonenumber-field = "^7.1.0"
 phonenumbers = "^8.13.18"
 numpy = "^1.25.2"
+django-filter = "^23.2"
 
 
 [build-system]
